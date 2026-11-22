@@ -121,15 +121,15 @@ curl "$URL/api/tasks"
 |---|---|---|
 | VPC | VPC > Your VPCs / Subnets | `10.0.0.0/16`, 6 subnets in 2 AZs |
 | Security groups | EC2 > Security Groups | ALB: 80/443 from anywhere; ECS: 8000 from ALB SG; RDS: 5432 from ECS SG |
-| ECR | ECR > Repositories | `student-webapp` with the `latest` image and a lifecycle policy |
+| ECR | ECR > Repositories | `final-webapp` with the `latest` image and a lifecycle policy |
 | RDS | RDS > Databases | `db.t4g.micro`, Single-AZ, gp3 20 GB, encrypted, not publicly accessible |
-| Secrets | Secrets Manager | `student-webapp/db-credentials` |
+| Secrets | Secrets Manager | `final-webapp/db-credentials` |
 | ALB | EC2 > Target Groups | Targets `healthy`, health check `/health` |
 | ECS | ECS > Clusters > service | 1 running task, Container Insights enabled, `secrets` listed in the task definition (no plaintext password) |
 | Auto Scaling | ECS service > Configuration and networking > Service auto scaling | min 1 / max 3, target 60% CPU |
-| Logs | CloudWatch > Log groups | `/ecs/student-webapp` has app logs |
+| Logs | CloudWatch > Log groups | `/ecs/final-webapp` has app logs |
 | Alarms | CloudWatch > Alarms | `cpu-high`, `alb-5xx`, `unhealthy-hosts` (state `OK`) |
-| Budget | Billing > Budgets | `student-webapp-monthly` $15 with 50/80/100% alerts |
+| Budget | Billing > Budgets | `final-webapp-monthly` $15 with 50/80/100% alerts |
 
 ## 5. Load test and Auto Scaling
 
@@ -142,7 +142,7 @@ python3 tests/load_test.py "$URL" --concurrency 60 --duration 300 --cpu-ms 200
 Watch scaling while it runs:
 
 ```bash
-watch -n 15 'aws ecs describe-services --cluster student-webapp-cluster --services student-webapp-service \
+watch -n 15 'aws ecs describe-services --cluster final-webapp-cluster --services final-webapp-service \
   --query "services[0].{desired:desiredCount,running:runningCount}" --region eu-central-1'
 aws application-autoscaling describe-scaling-activities --service-namespace ecs --region eu-central-1
 ```

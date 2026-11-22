@@ -83,6 +83,14 @@ def create_task(payload: TaskCreate, db: Session = Depends(get_db)):
     return task
 
 
+@app.get("/api/tasks/{task_id}", response_model=TaskOut)
+def get_task(task_id: int, db: Session = Depends(get_db)):
+    task = db.get(Task, task_id)
+    if not task:
+        raise HTTPException(404, "Task not found")
+    return task
+
+
 @app.put("/api/tasks/{task_id}", response_model=TaskOut)
 def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)):
     task = db.get(Task, task_id)
