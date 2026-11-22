@@ -81,5 +81,5 @@ resource "aws_ecs_service" "app" {
     ignore_changes = [desired_count]
   }
 
-  depends_on = [aws_lb_listener.http, aws_iam_role_policy.execution]
+  depends_on = [aws_lb_listener.http, aws_iam_role_policy.execution, aws_secretsmanager_secret_version.db]
 }
